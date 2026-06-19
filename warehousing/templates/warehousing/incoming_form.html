@@ -1,0 +1,170 @@
+{% extends 'layout/base.html' %}
+
+{% block title %}
+    Приймання зерна | AgroSphere
+{% endblock %}
+
+{% block content %}
+    <section class="row justify-content-center py-4">
+        <article class="col-lg-8 col-md-10">
+            <div class="card shadow border-0">
+                <div class="card-body p-5">
+                    <header class="text-center mb-4">
+                        <h2 class="fw-bold text-success">
+                            Оформлення надходження зерна
+                        </h2>
+
+                        <p class="text-muted">
+                            Внесіть якісні характеристики партії та 
+                            складські параметри для реєстрації в журналі
+                        </p>
+                    </header>
+                    
+                    <form method="post" novalidate>
+                        {% csrf_token %}
+                        
+                        {% if form.non_field_errors %}
+                            <div class="alert alert-danger mb-4">
+                                {% for error in form.non_field_errors %}
+                                    {{ error }}
+                                {% endfor %}
+                            </div>
+                        {% endif %}
+
+                        <div class="row">
+                            <div class="col-md-6 border-end">
+                                <h3 class="h6 text-success fw-bold text-uppercase border-bottom pb-2 mb-3">
+                                    <i class="bi bi-patch-info-fill me-1"></i> 
+                                    Параметри партії
+                                </h3>
+                                
+                                <div class="mb-3">
+                                    <label for="{{ form.field.id_for_label }}" 
+                                           class="form-label fw-semibold">
+                                        {{ form.field.label }}
+                                    </label>
+
+                                    {{ form.field }}
+
+                                    {% if form.field.errors %}
+                                        <div class="text-danger small mt-1">
+                                            {{ form.field.errors|striptags }}
+                                        </div>
+                                    {% endif %}
+                                </div>
+
+                                <div class="mb-3">
+                                    <label for="{{ form.crop_type.id_for_label }}" 
+                                           class="form-label fw-semibold">
+                                        {{ form.crop_type.label }}
+                                    </label>
+
+                                    {{ form.crop_type }}
+
+                                    {% if form.crop_type.errors %}
+                                        <div class="text-danger small mt-1">
+                                            {{ form.crop_type.errors|striptags }}
+                                        </div>
+                                    {% endif %}
+                                </div>
+
+                                <div class="row">
+                                    <div class="col-6 mb-3">
+                                        <label for="{{ form.grain_class.id_for_label }}" 
+                                               class="form-label fw-semibold">
+                                            {{ form.grain_class.label }}
+                                        </label>
+
+                                        {{ form.grain_class }}
+
+                                        {% if form.grain_class.errors %}
+                                            <div class="text-danger small mt-1">
+                                                {{ form.grain_class.errors|striptags }}
+                                            </div>
+                                        {% endif %}
+                                    </div>
+                                    
+                                    <div class="col-6 mb-3">
+                                        <label for="{{ form.moisture.id_for_label }}" 
+                                               class="form-label fw-semibold">
+                                            {{ form.moisture.label }}
+                                        </label>
+
+                                        {{ form.moisture }}
+
+                                        {% if form.moisture.errors %}
+                                            <div class="text-danger small mt-1">
+                                                {{ form.moisture.errors|striptags }}
+                                            </div>
+                                        {% endif %}
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="col-md-6 ps-md-4">
+                                <h3 class="h6 text-success fw-bold text-uppercase 
+                                           border-bottom pb-2 mb-3">
+                                    <i class="bi bi-box-seam-fill me-1"></i> 
+                                    Складський облік
+                                </h3>
+
+                                <div class="mb-3">
+                                    <label for="{{ form.warehouse.id_for_label }}" 
+                                           class="form-label fw-semibold">
+                                        {{ form.warehouse.label }}
+                                    </label>
+
+                                    {{ form.warehouse }}
+
+                                    {% if form.warehouse.errors %}
+                                        <div class="text-danger small mt-1">
+                                            {{ form.warehouse.errors|striptags }}
+                                        </div>
+                                    {% endif %}
+                                </div>
+
+                                <div class="mb-4">
+                                    <label for="{{ form.weight_tons.id_for_label }}" 
+                                           class="form-label fw-semibold">
+                                        {{ form.weight_tons.label }}
+                                    </label>
+
+                                    <div class="input-group">
+                                        {{ form.weight_tons }}
+                                        <span class="input-group-text bg-light text-muted">
+                                            т
+                                        </span>
+                                    </div>
+
+                                    {% if form.weight_tons.errors %}
+                                        <div class="text-danger small mt-1">
+                                            {{ form.weight_tons.errors|striptags }}
+                                        </div>
+                                    {% endif %}
+                                </div>
+                                
+                                <div class="alert alert-light border shadow-sm small text-muted p-3">
+                                    <i class="bi bi-shield-lock-fill text-success me-1"></i>
+                                    Операція проводиться під вашим системним ідентифікатором оператора. 
+                                    Дані автоматично оновлять поточний баланс обраного складу.
+                                </div>
+                            </div>
+                        </div>
+
+                        <footer class="mt-4 pt-3 border-top d-flex gap-2 justify-content-end">
+                            <a href="{% url 'warehouse_journal' %}" 
+                               class="btn btn-outline-secondary px-4">
+                                Скасувати
+                            </a>
+
+                            <button type="submit" 
+                                    class="btn btn-success px-5 fw-bold">
+                                Прийняти на склад
+                            </button>
+                        </footer>
+                    </form>
+                </div>
+            </div>
+        </article>
+    </section>
+{% endblock %}

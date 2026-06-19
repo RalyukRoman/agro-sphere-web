@@ -3,7 +3,6 @@ from django.views.generic import CreateView
 from django.views import View
 from django.urls import reverse_lazy
 from django.shortcuts import redirect
-from django.contrib import messages
 from .models import User
 
 from .forms import (
@@ -48,11 +47,6 @@ class RegisterUserView(CreateView):
     success_url = reverse_lazy('login')
 
     def form_valid(self, form):
-        messages.success(
-            self.request, 
-            "Акаунт успішно створено! " \
-            "Тепер ви можете увійти в систему."
-        )
         return super().form_valid(form)
 
 
@@ -79,7 +73,6 @@ class UserLogoutView(LogoutView):
     next_page = reverse_lazy('login')
     
     def dispatch(self, request, *args, **kwargs):
-        messages.info(request, "Ви вийшли з системи.")
         return super().dispatch(request, *args, **kwargs)
 
 
@@ -92,17 +85,8 @@ class ProfileDeleteView(LoginRequiredMixin, View):
         try:
             user.delete()
             logout(request)
-            messages.success(
-                request, 
-                "Ваш аккаунт було успішно видалено з системи."
-            )
             return redirect('login')
         
         except Exception as e:
-            messages.error(
-                request, 
-                "Не вдалося видалити аккаунт, оскільки ви " \
-                "підписані як оператор у чинних складських накладних."
-            )
             return redirect('profile')
     

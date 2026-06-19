@@ -112,7 +112,7 @@ class WarehouseJournalEntry(models.Model):
     )
 
     batch = models.ForeignKey(
-        verbose_name="Бакет",
+        verbose_name="Партія",
         to=GrainBatch, 
         on_delete=models.CASCADE
     )

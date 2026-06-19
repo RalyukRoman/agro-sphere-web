@@ -1,14 +1,13 @@
 from django.urls import reverse_lazy
 from django.http import Http404
 
-from geo_analytics.models import Field, FieldMetricHistory
-from geo_analytics.forms import FieldForm, FieldMetricHistoryForm
+from geo_analytics.models import Field
+from geo_analytics.forms import FieldForm
 from warehousing.models import Warehouse
 
 from django.views.generic import (
     TemplateView, 
     CreateView,
-    DetailView, 
     UpdateView, 
     DeleteView
 )
@@ -66,37 +65,3 @@ class FieldDeleteView(LoginRequiredMixin, DeleteView):
             return queryset.filter(company=self.request.user.company)
         
         raise Http404("Ви не маєте доступу до цього об'єкта або не авторизовані.")
-
-
-class FieldAnalyticsView(LoginRequiredMixin, DetailView):
-    """Детальна аналітика конкретного поля."""
-
-    model = Field
-    template_name = 'geo_analytics/field_analytics.html'
-    context_object_name = 'field'
-
-    def get_context_data(self, **kwargs):
-        """Отримати інформацію про метрики поля."""
-
-        context = super().get_context_data(**kwargs)
-
-        context['metrics'] = FieldMetricHistory.objects.filter(
-            field=self.get_object()
-        ).order_by('-date')
-
-        return context
-
-
-class FieldMetricCreateView(LoginRequiredMixin, CreateView):
-    """Контролер для додавання нових метрик стану поля."""
-
-    model = FieldMetricHistory
-    form_class = FieldMetricHistoryForm
-    template_name = 'geo_analytics/metric_form.html'
-
-    def get_success_url(self):
-        """Повертає на сторінку аналітики відповідного поля."""
-        return reverse_lazy(
-            'field_analytics', 
-            kwargs={'pk': self.object.field.pk}
-        )

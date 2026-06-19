@@ -1,13 +1,22 @@
 from django.urls import reverse_lazy
 from django.http import Http404
 
-from warehousing.models import Warehouse, WarehouseJournalEntry
-from warehousing.forms import WarehouseJournalEntryForm, WarehouseForm
+from .models import (
+    Warehouse, 
+    WarehouseJournalEntry
+)
+
+from .forms import (
+    GrainOutgoingForm, 
+    GrainIncomingForm, 
+    WarehouseForm
+)
 
 from django.views.generic import (
     CreateView, 
     ListView, 
     DeleteView,
+    FormView
 )
 
 from django.contrib.auth.mixins import (
@@ -61,6 +70,7 @@ class WarehouseDeleteView(LoginRequiredMixin, DeleteView):
 
 class InventoryJournalView(LoginRequiredMixin, ListView):
     """Журнал складських операцій для всіх складів компанії."""
+
     model = WarehouseJournalEntry
     template_name = 'warehousing/journal.html'
     context_object_name = 'entries'
@@ -71,13 +81,25 @@ class InventoryJournalView(LoginRequiredMixin, ListView):
         )
 
 
-class CreateTransactionView(LoginRequiredMixin, CreateView):
-    """Сторінка створення нової транзакції."""
+class GrainIncomingCreateView(LoginRequiredMixin, FormView):
+    "Сторінка для створення нової патії і запису транзакції"
+    
+    template_name = 'warehousing/incoming_form.html'
+    form_class = GrainIncomingForm
+    success_url = reverse_lazy('warehouse_journal')
 
-    model = WarehouseJournalEntry
-    form_class = WarehouseJournalEntryForm
-    template_name = 'warehousing/transaction_form.html'
-    success_url = reverse_lazy('inventory_journal')
+    def form_valid(self, form):
+        form.save(operator=self.request.user)
+        return super().form_valid(form)
+    
+    
+class GrainOutgoingCreateView(LoginRequiredMixin, FormView):
+    "Сторінка для операцій списання та бронювання існуючих партій "
 
-    def get_initial(self):
-        return {'operator_id': self.request.user.id}
+    template_name = 'warehousing/outgoing_form.html'
+    form_class = GrainOutgoingForm
+    success_url = reverse_lazy('warehouse_journal')
+
+    def form_valid(self, form):
+        form.save(operator=self.request.user)
+        return super().form_valid(form)

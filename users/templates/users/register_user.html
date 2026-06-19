@@ -1,0 +1,82 @@
+{% extends 'layout/base.html' %}
+
+{% block title %}
+    Реєстрація працівника | AgroSphere
+{% endblock %}
+
+{% block content %}
+    <section class="row justify-content-center py-4">
+        <article class="col-md-6">
+            <div class="card shadow border-0">
+                <div class="card-body p-5">
+                    <header class="text-center mb-4">
+                        <h2 class="fw-bold text-success">
+                            Реєстрація працівника
+                        </h2>
+
+                        <p class="text-muted">
+                            Створіть персональний аккаунт для доступу до системи вашої компанії
+                        </p>
+                    </header>
+                    
+                    <form method="post" novalidate>
+                        {% csrf_token %}
+                        
+                        {% if form.non_field_errors %}
+                            <div class="alert alert-danger mb-4">
+                                {% for error in form.non_field_errors %}
+                                    {{ error }}
+                                {% endfor %}
+                            </div>
+                        {% endif %}
+
+                        {% for field in form %}
+                            <div class="mb-3">
+                                <label for="{{ field.id_for_label }}" class="form-label fw-semibold">
+                                    {{ field.label }}
+                                </label>
+                                
+                                {{ field }}
+                                
+                                {% if field.help_text %}
+                                    <div class="form-text small text-muted">{{ field.help_text }}</div>
+                                {% endif %}
+                                
+                                {% if field.errors %}
+                                    <div class="text-danger small mt-1">
+                                        {{ field.errors|striptags }}
+                                    </div>
+                                {% endif %}
+                            </div>
+                        {% endfor %}
+
+                        <div class="mt-4">
+                            <button type="submit" 
+                                    class="btn btn-success btn-lg w-100 fw-bold">
+                                Створити акаунт
+                            </button>
+                        </div>
+                    </form>
+
+                    <footer class="text-center border-top pt-3 mt-4">
+                        <p class="mb-2 text-muted small">
+                            Потрібно створити новий агрохолдинг? 
+                            <a href="{% url 'register' %}" 
+                            class="text-success text-decoration-none fw-bold">
+                                Зареєструвати компанію
+                            </a>
+                        </p>
+
+                        <p class="mb-0 text-muted small">
+                            Вже маєте профіль? 
+                            <a href="{% url 'login' %}" 
+                            class="text-success text-decoration-none fw-bold">
+                                Увійти
+                            </a>
+                        </p>
+                    </footer>
+                </div>
+            </div>
+        </article>
+    </section>
+{% endblock %}

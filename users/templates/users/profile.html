@@ -12,6 +12,16 @@
                     <h3 class="mb-0 h5">
                         Налаштування профілю
                     </h3>
+
+                    <form action="{% url 'logout' %}" 
+                          method="post" class="m-0">
+                        {% csrf_token %}
+
+                        <button type="submit" 
+                                class="btn btn-sm btn-outline-light fw-bold">
+                            Вийти з системи
+                        </button>
+                    </form>
                 </header>
                 
                 <div class="card-body p-4">
@@ -103,8 +113,75 @@
                             </a>
                         </footer>
                     </form>
+
+                    <section>
+                        <h4 class="h6 text-danger fw-bold mb-3">
+                            Небезпечна зона
+                        </h4>
+
+                        <p class="text-muted small">
+                            Після видалення вашого профілю ви втратите 
+                            доступ до робочого простору компанії. 
+                            Цю дію не можна скасувати.
+                        </p>
+
+                        <button type="button" 
+                                class="btn btn-outline-danger btn-sm" 
+                                data-bs-toggle="modal" 
+                                data-bs-target="#deleteProfileModal">
+                            Видалити мій аккаунт
+                        </button>
+                    </section>
                 </div>
             </div>
         </article>
     </section>
+
+    <div class="modal fade" 
+         id="deleteProfileModal" 
+         tabindex="-1" 
+         aria-labelledby="deleteProfileModalLabel" 
+         aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered">
+            <div class="modal-content border-0 shadow">
+                <div class="modal-header bg-danger text-white">
+                    <h5 class="modal-title h6 fw-bold" 
+                        id="deleteProfileModalLabel">
+                        Підтвердження видалення аккаунту
+                    </h5>
+                    <button type="button" 
+                            class="btn-close btn-close-white"
+                            data-bs-shadow="none" 
+                            data-bs-dismiss="modal" 
+                            aria-label="Close">
+                    </button>
+                </div>
+
+                <div class="modal-body p-4">
+                    <p class="mb-0">
+                        Ви впевнені, що хочете видалити свій аккаунт 
+                        <strong>{{ user.username }}</strong>? 
+                        Всі ваші персональні налаштування будуть стерті назавжди.
+                    </p>
+                </div>
+
+                <div class="modal-footer bg-light">
+                    <button type="button" 
+                            class="btn btn-secondary btn-sm px-3" 
+                            data-bs-dismiss="modal">
+                        Скасувати
+                    </button>
+
+                    <form action="{% url 'profile_delete' %}" 
+                          method="post" class="m-0">
+                        {% csrf_token %}
+
+                        <button type="submit" class="btn btn-danger btn-sm px-3 fw-bold">
+                            Так, видалити назавжди
+                        </button>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
 {% endblock %}

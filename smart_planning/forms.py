@@ -1,5 +1,5 @@
 from django import forms
-from .models import CropCulture, WeatherCycleMatrix, CropPlan
+from .models import CropCulture
 from geo_analytics.models import Field
 
 
@@ -14,35 +14,6 @@ class CropCultureForm(forms.ModelForm):
             'base_market_price': forms.NumberInput(attrs={'class': 'form-control'}),
         }
 
-
-class WeatherCycleMatrixForm(forms.ModelForm):
-    """Форма для внесення кліматичних даних за період."""
-
-    class Meta:
-        model = WeatherCycleMatrix
-        fields = '__all__'
-        widgets = {
-            'region': forms.TextInput(attrs={'class': 'form-control'}),
-            'year': forms.NumberInput(attrs={'class': 'form-control'}),
-            'month': forms.NumberInput(attrs={'class': 'form-control'}),
-        }
-
-
-class CropPlanForm(forms.ModelForm):
-    """Форма для перегляду або ручного коригування плану посіву."""
-
-    class Meta:
-        model = CropPlan
-        exclude = ['created_at']
-        widgets = {
-            'field': forms.Select(attrs={'class': 'form-select'}),
-            'suggested_crop': forms.Select(attrs={'class': 'form-select'}),
-
-            'confidence_score': forms.NumberInput(attrs={
-                'class': 'form-control', 
-                'readonly': 'readonly'
-            }),
-        }
 
 class SmartPlanningCalculateForm(forms.Form):
     """Спеціальна форма для розрахунку оптимального плану посіву."""

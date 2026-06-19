@@ -1,7 +1,31 @@
 from django.contrib.auth.models import AbstractUser
 from django.db import models
-from geo_analytics.models import Company
+import uuid
 
+
+class Company(models.Model):
+    """Модель для представлення компанії."""
+
+    id = models.UUIDField(
+        verbose_name="ID",
+        primary_key=True, 
+        default=uuid.uuid4, 
+        editable=False
+    )
+        
+    name = models.CharField(
+        verbose_name="Назва", 
+        max_length=100
+    )
+
+    created_at = models.DateTimeField(
+        verbose_name="Дата створення", 
+        auto_now_add=True
+    )
+
+    def __str__(self):
+        return self.name
+    
 
 class User(AbstractUser):
     """Модель для представлення користувача."""
@@ -36,6 +60,8 @@ class User(AbstractUser):
         related_name="employees",
         to=Company,
         on_delete=models.CASCADE,
+        null=True,
+        blank=True
     )
 
     def __str__(self):

@@ -116,55 +116,6 @@ class CropCulture(models.Model):
     
     def __str__(self):
         return self.name
-
-
-class WeatherCycleMatrix(models.Model):
-    """Модель для представлення циклічної матриці погоди."""
-
-    id = models.UUIDField(
-        verbose_name="ID",
-        primary_key=True, 
-        default=uuid.uuid4, 
-        editable=False
-    )
-
-    region = models.CharField(
-        max_length=100
-    )
-
-    year = models.PositiveIntegerField(
-        verbose_name="Рік",
-        validators=[
-            MinValueValidator(1900),
-            MaxValueValidator(2100)
-        ]
-    )
-
-    month = models.PositiveIntegerField(
-        verbose_name="Місяць",
-        validators=[
-            MinValueValidator(1),
-            MaxValueValidator(12)
-        ]
-    )
-
-    total_precipitation = models.FloatField(
-        verbose_name="Загальний опад",
-        validators=[
-            MinValueValidator(0.0)
-        ]
-    )
-
-    avg_temperature = models.FloatField(
-        verbose_name="Середня температура",
-        validators=[
-            MinValueValidator(-100.0),
-            MaxValueValidator(100.0)
-        ]
-    )
-
-    def __str__(self):
-        return f"{self.region} - {self.year}-{self.month}"
     
 
 class CropPlan(models.Model):

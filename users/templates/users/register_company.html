@@ -54,7 +54,15 @@
                 </form>
 
                 <footer class="text-center border-top pt-3 mt-4">
-                    <p class="mb-0 text-muted">
+                    <p class="mb-2 text-muted small">
+                        Шукаєте доступ для персоналу? 
+                        <a href="{% url 'register_user' %}" 
+                           class="text-success text-decoration-none fw-bold">
+                            Зареєструватися як працівник
+                        </a>
+                    </p>
+                    
+                    <p class="mb-0 text-muted small">
                         Вже маєте корпоративний аккаунт? 
                         <a href="{% url 'login' %}" 
                            class="text-success text-decoration-none fw-bold">

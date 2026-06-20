@@ -7,18 +7,24 @@
 
 {% block content %}
     <section class="container py-4">
-        <div class="d-flex justify-content-between align-items-center mb-4">
+        <div class="d-flex justify-content-between
+                    align-items-center mb-4">
             <h2>Склади та елеватори</h2>
 
             <div class="d-flex gap-2">
-                <a href="{% url 'warehouse_add' %}" class="btn btn-primary">
-                    <i class="bi bi-plus-lg"></i> Додати склад
-                </a>
+                {% if perms.warehousing.add_warehouse %}
+                    <a href="{% url 'warehouse_add' %}" class="btn btn-primary">
+                        <i class="bi bi-plus-lg"></i> 
+                        Додати склад
+                    </a>
+                {% endif %}
                 <a href="{% url 'grain_incoming' %}" class="btn btn-success">
-                    <i class="bi bi-arrow-down-left"></i> Прихід зерна
+                    <i class="bi bi-arrow-down-left"></i> 
+                    Прихід зерна
                 </a>
                 <a href="{% url 'grain_outgoing' %}" class="btn btn-danger">
-                    <i class="bi bi-arrow-up-right"></i> Витрата зерна
+                    <i class="bi bi-arrow-up-right"></i> 
+                    Витрата зерна
                 </a>
             </div>
         </div>
@@ -26,32 +32,38 @@
         <div class="row g-4">
             {% for warehouse in warehouses %}
                 <div class="col-md-6 col-lg-4">
-                    <article class="card shadow-sm h-100 position-relative border-0">
-                        
+                    <article class="card shadow-sm h-100 
+                                    position-relative border-0">
                         <div class="card-header bg-transparent border-0 pt-3 pb-0">
                             <div class="d-flex justify-content-between align-items-start">
                                 <h5 class="card-title mb-0 text-success fw-bold">
                                     {{ warehouse.name }}
                                 </h5>
                                 
-                                <div class="d-flex gap-2">
-                                    <a href="{% url 'warehouse_delete' warehouse.pk %}" class="text-danger p-0 border-0" title="Видалити склад">
-                                        <i class="bi bi-trash fs-5"></i>
-                                    </a>
-                                </div>
+                                {% if perms.warehousing.delete_warehouse %}
+                                    <div class="d-flex gap-2">
+                                        <a href="{% url 'warehouse_delete' warehouse.pk %}" 
+                                           class="text-danger p-0 border-0" 
+                                           title="Видалити склад">
+                                            <i class="bi bi-trash fs-5"></i>
+                                        </a>
+                                    </div>
+                                {% endif %}
                             </div>
                         </div>
 
                         <div class="card-body d-flex flex-column justify-content-between">
                             <div>
-                                <div class="d-flex justify-content-between small text-muted mb-1">
+                                <div class="d-flex justify-content-between small 
+                                            text-muted mb-1">
                                     <span>Заповнено: {{ warehouse.current_balance_tons|default:0 }} т.</span>
                                     <span>Місткість: {{ warehouse.capacity_tons }} т.</span>
                                 </div>
                                 
                                 <div class="progress mb-3" style="height: 12px;">
-                                    <div class="progress-bar bg-success" role="progressbar" 
-                                         style="width: {{ warehouse.fill_percentage|default:0 }}%;" 
+                                    <div class="progress-bar bg-success" 
+                                         role="progressbar" 
+                                         style="width: {{ warehouse.fill_percentage|stringformat:"f" }}%;" 
                                          aria-valuenow="{{ warehouse.current_balance_tons|default:0 }}" 
                                          aria-valuemin="0" 
                                          aria-valuemax="{{ warehouse.capacity_tons }}">
@@ -59,15 +71,17 @@
                                 </div>
 
                                 <div class="warehouse-transactions mb-3">
-                                    <h6 class="small text-muted border-bottom pb-1 mb-2 fw-bold">
-                                        <i class="bi bi-clock-history"></i> Останні операції
+                                    <h6 class="small text-muted border-bottom 
+                                               pb-1 mb-2 fw-bold">
+                                        <i class="bi bi-clock-history"></i> 
+                                        Останні операції
                                     </h6>
                                     {% if warehouse.recent_transactions %}
                                         <ul class="list-group list-group-flush small">
                                             {% for transaction in warehouse.recent_transactions %}
                                                 <li class="list-group-item d-flex justify-content-between align-items-center bg-transparent px-0 py-1 border-0">
                                                     <div>
-                                                        {% if transaction.transaction_type == 'IN' or transaction.transaction_type == 'incoming' %}
+                                                        {% if transaction.entry_type == 'INCOMING' %}
                                                             <span class="badge bg-success-subtle text-success me-1" title="Прихід">
                                                                 <i class="bi bi-arrow-down-left"></i>
                                                             </span>
@@ -76,36 +90,57 @@
                                                                 <i class="bi bi-arrow-up-right"></i>
                                                             </span>
                                                         {% endif %}
-                                                        <span class="fw-medium">{{ transaction.crop.name }}</span>
+                                                        
+                                                        <span class="fw-medium">
+                                                            {{ transaction.batch.crop.name|default:"Hoh" }}
+                                                        </span>
                                                     </div>
+
                                                     <div class="text-end">
                                                         <span class="fw-bold">
-                                                            {% if transaction.transaction_type == 'IN' or transaction.transaction_type == 'incoming' %}+{% else %}-{% endif %}{{ transaction.amount_tons }} т.
+                                                            {% if transaction.entry_type == 'INCOMING' %}
+                                                                +
+                                                            {% else %}
+                                                                -
+                                                            {% endif %}
+                                                            {{ transaction.weight_tons }} т.
                                                         </span>
+
                                                         <div class="text-muted" style="font-size: 0.75rem;">
-                                                            {{ transaction.date|date:"d.m.Y" }}
+                                                            {{ transaction.created_at|date:"d.m.Y H:i" }}
                                                         </div>
                                                     </div>
                                                 </li>
                                             {% endfor %}
                                         </ul>
                                     {% else %}
-                                        <p class="text-muted small italic mb-0 py-1">Операцій по складу ще не зареєстровано.</p>
+                                        <p class="text-muted small italic mb-0 py-1">
+                                            Операцій по складу ще не зареєстровано.
+                                        </p>
                                     {% endif %}
                                 </div>
                             </div>
 
                             <div class="d-flex flex-column gap-2 mt-2">
-                                <a href="{% url 'inventory_journal' %}?warehouse_id={{ warehouse.id }}" class="btn btn-sm btn-outline-primary w-100">
-                                    <i class="bi bi-journal-text"></i> Журнал операцій складу
+                                <a href="{% url 'warehouses_journal' %}?warehouse_id={{ warehouse.id }}" 
+                                   class="btn btn-sm btn-outline-primary w-100">
+                                    <i class="bi bi-journal-text"></i> 
+                                    Журнал операцій складу
                                 </a>
                                 
                                 <div class="d-flex gap-2">
-                                    <a href="{% url 'grain_incoming' %}?warehouse_id={{ warehouse.id }}" class="btn btn-sm btn-outline-success flex-grow-1" title="Оформити прихід на цей склад">
-                                        <i class="bi bi-plus-circle"></i> + Прихід
+                                    <a href="{% url 'grain_incoming' %}?warehouse_id={{ warehouse.id }}" 
+                                       class="btn btn-sm btn-outline-success flex-grow-1" 
+                                       title="Оформити прихід на цей склад">
+                                        <i class="bi bi-plus-circle"></i> 
+                                        + Прихід
                                     </a>
-                                    <a href="{% url 'grain_outgoing' %}?warehouse_id={{ warehouse.id }}" class="btn btn-sm btn-outline-danger flex-grow-1" title="Оформити витрату з цього складу">
-                                        <i class="bi bi-dash-circle"></i> - Витрата
+
+                                    <a href="{% url 'grain_outgoing' %}?warehouse_id={{ warehouse.id }}" 
+                                       class="btn btn-sm btn-outline-danger flex-grow-1" 
+                                       title="Оформити витрату з цього складу">
+                                        <i class="bi bi-dash-circle"></i> 
+                                        - Витрата
                                     </a>
                                 </div>
                             </div>
@@ -117,9 +152,13 @@
                     <p class="text-muted fs-5 mb-3">
                         У вашої компанії ще немає зареєстрованих складів.
                     </p>
-                    <a href="{% url 'warehouse_add' %}" class="btn btn-primary">
-                        Створити перший склад
-                    </a>
+                    
+                    {% if perms.warehousing.add_warehouse %}
+                        <a href="{% url 'warehouse_add' %}" 
+                           class="btn btn-primary">
+                            Створити перший склад
+                        </a>
+                    {% endif %}
                 </div>
             {% endfor %}
         </div>

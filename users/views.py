@@ -1,8 +1,10 @@
 from django.contrib.auth import logout
+from django.contrib.auth.models import Group
 from django.views.generic import CreateView
 from django.views import View
 from django.urls import reverse_lazy
 from django.shortcuts import redirect
+from django.db import transaction
 from .models import User
 
 from .forms import (
@@ -34,6 +36,7 @@ class RegisterCompanyView(CreateView):
     form_class = CompanyForm
     success_url = reverse_lazy('login')
 
+    @transaction.atomic
     def form_valid(self, form):
         form.save()
         return redirect(self.success_url)
@@ -47,7 +50,8 @@ class RegisterUserView(CreateView):
     success_url = reverse_lazy('login')
 
     def form_valid(self, form):
-        return super().form_valid(form)
+        form.save()
+        return redirect(self.success_url)
 
 
 class UserLoginView(LoginView):

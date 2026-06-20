@@ -91,8 +91,11 @@
                         Розподіл культур по площі
                     </h3>
 
-                    <canvas id="distributionChart"
-                            width="400" height="200">
+                    <canvas id="distributionChart" 
+                            width="400" 
+                            height="200"
+                            data-labels='{{ chart_labels_json|safe }}'
+                            data-data='{{ chart_data_json|safe }}'>
                     </canvas>
                 </div>
             </div>
@@ -174,11 +177,5 @@
 
 {% block scripts %}
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-    
-    <script>
-        const chartLabels = {{ chart_labels_json|safe }};
-        const chartData = {{ chart_data_json|safe }};
-    </script>
-
-    <script src="{% static 'smart_planning/js/planning_results.js' %}"></script>
+    <script src="{% static 'smart_planning/js/results.js' %}"></script>
 {% endblock %}

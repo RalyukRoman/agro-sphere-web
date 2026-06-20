@@ -20,11 +20,13 @@
                 </p>
             </div>
 
-            <a href="{% url 'culture_create' %}" 
-               class="btn btn-success fw-bold shadow-sm">
-                <i class="bi bi-plus-lg me-1"></i> 
-                Додати культуру
-            </a>
+            {% if perms.smart_planning.add_cropculture %}
+                <a href="{% url 'culture_create' %}" 
+                   class="btn btn-success fw-bold shadow-sm">
+                    <i class="bi bi-plus-lg me-1"></i> 
+                    Додати культуру
+                </a>
+            {% endif %}
         </header>
 
         <div class="card shadow border-0 overflow-hidden">
@@ -37,7 +39,10 @@
                             <th>Вологість оптимальна</th>
                             <th>Середня врожайність</th>
                             <th>Базова ціна (т)</th>
-                            <th class="text-end pe-4">Дії</th>
+
+                            {% if perms.smart_planning.change_cropculture or perms.smart_planning.delete_cropculture %}
+                                <th class="text-end pe-4">Дії</th>
+                            {% endif %}
                         </tr>
                     </thead>
 
@@ -71,15 +76,19 @@
 
                                 <td class="text-end pe-4">
                                     <div class="btn-group btn-group-sm">
-                                        <a href="{% url 'culture_update' culture.id %}" 
-                                           class="btn btn-outline-secondary" title="Редагувати">
-                                            Редагувати
-                                        </a>
+                                        {% if perms.smart_planning.change_cropculture %}
+                                            <a href="{% url 'culture_update' culture.id %}" 
+                                               class="btn btn-outline-secondary" title="Редагувати">
+                                                Редагувати
+                                            </a>
+                                        {% endif %}
 
-                                        <a href="{% url 'culture_delete' culture.id %}" 
-                                           class="btn btn-outline-danger" title="Видалити">
-                                            Видалити
-                                        </a>
+                                        {% if perms.smart_planning.delete_cropculture %}
+                                            <a href="{% url 'culture_delete' culture.id %}" 
+                                               class="btn btn-outline-danger" title="Видалити">
+                                                Видалити
+                                            </a>
+                                        {% endif %}
                                     </div>
                                 </td>
                             </tr>

@@ -22,6 +22,7 @@ from django.views.generic import (
 
 from django.contrib.auth.mixins import (
     LoginRequiredMixin, 
+    PermissionRequiredMixin
 )
 
 
@@ -34,36 +35,39 @@ class CropCultureListView(LoginRequiredMixin, ListView):
     ordering = ['name']
 
 
-class CropCultureCreateView(LoginRequiredMixin, CreateView):
+class CropCultureCreateView(PermissionRequiredMixin, CreateView):
     """Створення нової культури."""
 
     model = CropCulture
     form_class = CropCultureForm
     template_name = 'smart_planning/culture_form.html'
     success_url = reverse_lazy('culture_list')
+    permission_required = 'smart_planning.add_cropculture'
 
     def form_valid(self, form):
         return super().form_valid(form)
 
 
-class CropCultureUpdateView(LoginRequiredMixin, UpdateView):
+class CropCultureUpdateView(PermissionRequiredMixin, UpdateView):
     """Редагування існуючої культури."""
 
     model = CropCulture
     form_class = CropCultureForm
     template_name = 'smart_planning/culture_form.html'
     success_url = reverse_lazy('culture_list')
+    permission_required = 'smart_planning.change_cropculture'
 
     def form_valid(self, form):
         return super().form_valid(form)
 
 
-class CropCultureDeleteView(LoginRequiredMixin, DeleteView):
+class CropCultureDeleteView(PermissionRequiredMixin, DeleteView):
     """Видалення культури з системи."""
 
     model = CropCulture
     template_name = 'smart_planning/culture_confirm_delete.html'
     success_url = reverse_lazy('culture_list')
+    permission_required = 'smart_planning.delete_cropculture'
 
     def delete(self, request, *args, **kwargs):
         return super().delete(
@@ -76,6 +80,12 @@ class PlanCalculatorView(LoginRequiredMixin, FormView):
     
     form_class = SmartPlanningCalculateForm
     template_name = 'smart_planning/calculator.html'
+    
+    def get_form_kwargs(self):
+
+        kwargs = super().get_form_kwargs()
+        kwargs['company'] = self.request.user.company
+        return kwargs
     
     def form_valid(self, form):
         field = form.cleaned_data['field']
@@ -93,6 +103,11 @@ class PlanCalculatorView(LoginRequiredMixin, FormView):
         return redirect(
             f"{reverse_lazy('plan_results')}?plan_id={result['plan_id']}"
         )
+    
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context['has_crops'] = CropCulture.objects.exists() 
+        return context
 
 
 class PlanResultsView(LoginRequiredMixin, TemplateView):

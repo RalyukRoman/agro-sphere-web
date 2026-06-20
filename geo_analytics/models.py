@@ -58,6 +58,6 @@ class Field(models.Model):
     
     def save(self, *args, **kwargs):
         if self.geom:
-            geom_projected = self.geom.transform(3857, clone=True)
+            geom_projected = self.geom.transform(32632, clone=True)
             self.area_hectares = round(geom_projected.area / 10000, 2)
         super().save(*args, **kwargs)

@@ -41,3 +41,10 @@ class SmartPlanningCalculateForm(forms.Form):
         if budget is not None and budget < 0:
             raise forms.ValidationError("Бюджет не може бути від'ємним.")
         return budget
+    
+    def __init__(self, *args, **kwargs):
+        company = kwargs.pop('company', None)
+        super().__init__(*args, **kwargs)
+        
+        if company:
+            self.fields['field'].queryset = Field.objects.filter(company=company)

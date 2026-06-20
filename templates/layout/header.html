@@ -8,28 +8,55 @@
             <div class="collapse navbar-collapse">
                 <ul class="navbar-nav me-auto">
                     {% if user.is_authenticated %}
-                        <li class="nav-item"><a class="nav-link" href="{% url 'map_dashboard' %}">Карта</a></li>
-                        <li class="nav-item"><a class="nav-link" href="{% url 'warehouse_list' %}">Склади</a></li>
-                        <li class="nav-item"><a class="nav-link" href="{% url 'plan_calculate' %}">Планування</a></li>
+                        <li class="nav-item">
+                            <a class="nav-link" 
+                               href="{% url 'map_dashboard' %}">
+                                Карта
+                            </a>
+                        </li>
+
+                        <li class="nav-item">
+                            <a class="nav-link" 
+                               href="{% url 'warehouse_list' %}">
+                                Склади
+                            </a>
+                        </li>
+
+                        <li class="nav-item">
+                            <a class="nav-link" 
+                               href="{% url 'culture_list' %}">
+                                Культури
+                            </a>
+                        </li>
+
+                        <li class="nav-item">
+                            <a class="nav-link" 
+                               href="{% url 'plan_calculate' %}">
+                            Планування
+                            </a>
+                        </li>
                     {% endif %}
                 </ul>
 
                 <ul class="navbar-nav">
                     {% if user.is_authenticated %}
                         <li class="nav-item">
-                            <a class="nav-link" href="{% url 'user_profile' %}">
+                            <a class="nav-link" 
+                               href="{% url 'user_profile' %}">
                                 Мій профіль
                             </a>
                         </li>
                     {% else %}
                         <li class="nav-item">
-                            <a class="nav-link" href="{% url 'login' %}">
+                            <a class="nav-link" 
+                               href="{% url 'login' %}">
                                 Вхід
                             </a>
                         </li>
 
                         <li class="nav-item">
-                            <a class="btn btn-success ms-2" href="{% url 'register' %}">
+                            <a class="btn btn-success ms-2" 
+                               href="{% url 'register' %}">
                                 Реєстрація
                             </a>
                         </li>

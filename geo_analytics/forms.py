@@ -14,12 +14,18 @@ class FieldForm(gis_forms.ModelForm):
         fields = ['name', 'crop_status', 'geom', 'area_hectares']
 
         widgets = {
-            'name': forms.TextInput(attrs={'class': 'form-control'}),
-            'crop_status': forms.Select(attrs={'class': 'form-select'}),
+            'name': forms.TextInput(attrs={
+                'class': 'form-control'
+            }),
+            
+            'crop_status': forms.Select(attrs={
+                'class': 'form-select'
+            }),
             
             'geom': gis_forms.OSMWidget(attrs={
-                'map_width': '100%',
-                'map_height': 550,
+                'default_lon': 31.1656,
+                'default_lat': 48.3794,
+                'default_zoom': 6,
             }),
 
             'area_hectares': forms.HiddenInput(), 

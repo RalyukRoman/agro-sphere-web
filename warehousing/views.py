@@ -21,6 +21,7 @@ from django.views.generic import (
 
 from django.contrib.auth.mixins import (
     LoginRequiredMixin, 
+    PermissionRequiredMixin
 )
 
 
@@ -37,13 +38,14 @@ class WarehouseListView(LoginRequiredMixin, ListView):
         )
 
 
-class WarehouseCreateView(LoginRequiredMixin, CreateView):
+class WarehouseCreateView(PermissionRequiredMixin, CreateView):
     """Сторінка додавання нового складу на карту."""
 
     model = Warehouse
     form_class = WarehouseForm
     template_name = 'warehousing/warehouse_form.html'
     success_url = reverse_lazy('warehouse_list')
+    permission_required = 'warehousing.add_warehouse'
 
     def form_valid(self, form):
         """Прив'язує новий склад до компанії користувача."""
@@ -52,12 +54,13 @@ class WarehouseCreateView(LoginRequiredMixin, CreateView):
         return super().form_valid(form)
 
 
-class WarehouseDeleteView(LoginRequiredMixin, DeleteView):
+class WarehouseDeleteView(PermissionRequiredMixin, DeleteView):
     """Сторінка підтвердження видалення складу."""
 
     model = Warehouse
     template_name = 'warehousing/warehouse_confirm_delete.html'
     success_url = reverse_lazy('warehouse_list')
+    permission_required = 'warehousing.delete_warehouse'
 
     def get_queryset(self):
         queryset = super().get_queryset()
@@ -86,7 +89,12 @@ class GrainIncomingCreateView(LoginRequiredMixin, FormView):
     
     template_name = 'warehousing/incoming_form.html'
     form_class = GrainIncomingForm
-    success_url = reverse_lazy('warehouse_journal')
+    success_url = reverse_lazy('warehouses_journal')
+
+    def get_form_kwargs(self):
+        kwargs = super().get_form_kwargs()
+        kwargs['company'] = self.request.user.company
+        return kwargs
 
     def form_valid(self, form):
         form.save(operator=self.request.user)
@@ -105,7 +113,12 @@ class GrainOutgoingCreateView(LoginRequiredMixin, FormView):
 
     template_name = 'warehousing/outgoing_form.html'
     form_class = GrainOutgoingForm
-    success_url = reverse_lazy('warehouse_journal')
+    success_url = reverse_lazy('warehouses_journal')
+
+    def get_form_kwargs(self):
+        kwargs = super().get_form_kwargs()
+        kwargs['company'] = self.request.user.company
+        return kwargs
 
     def form_valid(self, form):
         form.save(operator=self.request.user)

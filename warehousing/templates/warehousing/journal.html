@@ -7,7 +7,8 @@
 
 {% block content %}
     <section class="container py-4">
-        <header class="d-flex justify-content-between align-items-center mb-4">
+        <header class="d-flex justify-content-between 
+                       align-items-center mb-4">
             <div>
                 <h2 class="fw-bold h3">
                     Журнал складських операцій
@@ -19,14 +20,14 @@
             </div>
 
             <div class="d-flex gap-2">
-                <a href="{% url 'transaction_add' %}" 
-                class="btn btn-warning fw-bold">
+                <a href="{% url 'grain_incoming' %}" 
+                   class="btn btn-warning fw-bold">
                     <i class="bi bi-plus-circle"></i> 
                     Нова операція
                 </a>
 
                 <a href="{% url 'warehouse_list' %}" 
-                class="btn btn-outline-secondary">
+                   class="btn btn-outline-secondary">
                     До списку складів
                 </a>
             </div>
@@ -37,12 +38,20 @@
                 <table class="table table-hover align-middle mb-0">
                     <thead class="table-light">
                         <tr>
-                            <th scope="col" class="ps-4">Дата та час</th>
+                            <th scope="col" 
+                                class="ps-4">
+                                Дата та час
+                            </th>
+
                             <th scope="col">Склад</th>
                             <th scope="col">Партія / Культура</th>
                             <th scope="col">Тип операції</th>
                             <th scope="col">Вага (тонн)</th>
-                            <th scope="col" class="pe-4 text-end">ID Оператора</th>
+
+                            <th scope="col" 
+                                class="pe-4 text-end">
+                                ID Оператора
+                            </th>
                         </tr>
                     </thead>
 
@@ -107,10 +116,13 @@
                                 <td colspan="6" class="text-center py-5">
                                     <div class="text-muted">
                                         <i class="bi bi-inbox fs-1 d-block mb-3"></i>
-                                        <p class="mb-0">Транзакцій ще не зафіксовано.</p>
+
+                                        <p class="mb-0">
+                                            Транзакцій ще не зафіксовано.
+                                        </p>
                                         
-                                        <a href="{% url 'transaction_add' %}" 
-                                        class="btn btn-sm btn-link text-warning p-0">
+                                        <a href="{% url 'grain_incoming' %}" 
+                                           class="btn btn-sm btn-link text-warning p-0">
                                             Створити першу операцію
                                         </a>
                                     </div>

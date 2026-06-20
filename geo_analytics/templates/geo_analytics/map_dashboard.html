@@ -15,9 +15,13 @@
         <div class="d-flex justify-content-between 
                     align-items-center mb-3">
             <h2>Карта об'єктів компанії</h2>
-            <a href="{% url 'field_add' %}" class="btn btn-primary">
-                + Додати поле
-            </a>
+
+            {% if perms.geo_analytics.add_field %}
+                <a href="{% url 'field_add' %}" 
+                   class="btn btn-primary">
+                    + Додати поле
+                </a>
+            {% endif %}
         </div>
 
         <div id="map"></div>
@@ -25,22 +29,13 @@
 {% endblock %}
 
 {% block scripts %}    
-    <script id="fields-data" type="application/json">
-        [
-            {% for field in fields %}
-                {% if field.geom %}
-                    {
-                        "id": {{ field.pk }},
-                        "name": "{{ field.name|escapejs }}",
-                        "area": "{{ field.area_hectares }}",
-                        "status": "{{ field.get_crop_status_display|escapejs }}",
-                        "geom": {{ field.geom.json|safe }},
-                        "editUrl": "{% url 'field_edit' field.pk %}",
-                        "deleteUrl": "{% url 'field_delete' field.pk %}"
-                    }{% if not forloop.last %},{% endif %}
-                {% endif %}
-            {% endfor %}
-        ]
+    {{ fields_json|json_script:"fields-data" }}
+
+    <script>
+        const userPermissions = {
+            canChangeField: {% if perms.geo_analytics.change_field %}true{% else %}false{% endif %},
+            canDeleteField: {% if perms.geo_analytics.delete_field %}true{% else %}false{% endif %}
+        };
     </script>
 
     <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>

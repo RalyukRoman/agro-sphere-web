@@ -45,6 +45,15 @@
                             </div>
                         </div>
 
+                        {% if user.company %}
+                            <div class="row mb-2">
+                                <div class="col-sm-4 fw-bold">UUID Компанії:</div>
+                                <div class="col-sm-8 text-muted small font-monospace">
+                                    {{ user.company.id }}
+                                </div>
+                            </div>
+                        {% endif %}
+
                         <div class="row mb-2">
                             <div class="col-sm-4 fw-bold">Роль:</div>
                             <div class="col-sm-8">

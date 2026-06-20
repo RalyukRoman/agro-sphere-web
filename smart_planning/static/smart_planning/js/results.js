@@ -1,7 +1,5 @@
-/** Ініціалізація графіка розподілу врожаю */
 function initDistributionChart(canvasEl, labels, data) {
     if (!canvasEl) return;
-
     const ctx = canvasEl.getContext('2d');
     
     return new Chart(ctx, {
@@ -45,6 +43,9 @@ document.addEventListener('DOMContentLoaded', function() {
     if (chartCanvas) {
         const labels = JSON.parse(chartCanvas.dataset.labels || '[]');
         const data = JSON.parse(chartCanvas.dataset.data || '[]');
+        
+        console.log("Отримані культури:", labels);
+        console.log("Отримана площа:", data);
         
         initDistributionChart(chartCanvas, labels, data);
     }

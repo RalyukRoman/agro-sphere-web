@@ -50,6 +50,17 @@ class Warehouse(models.Model):
         ]
     )
 
+    @property
+    def fill_percentage(self):
+        if self.capacity_tons and self.capacity_tons > 0:
+            percentage = (self.current_balance_tons / self.capacity_tons) * 100
+            return min(round(percentage, 1), 100.0)
+        return 0.0
+    
+    @property
+    def recent_transactions(self):
+        return self.transactions.all().order_by('-created_at')[:3]
+
     def __str__(self):
         return self.name
 
@@ -108,7 +119,8 @@ class WarehouseJournalEntry(models.Model):
     warehouse = models.ForeignKey(
         verbose_name="Склад",
         to=Warehouse, 
-        on_delete=models.CASCADE
+        on_delete=models.CASCADE,
+        related_name='transactions'
     )
 
     batch = models.ForeignKey(

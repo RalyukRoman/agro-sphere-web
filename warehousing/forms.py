@@ -105,6 +105,14 @@ class GrainIncomingForm(forms.Form):
         })
     )
 
+    def __init__(self, *args, **kwargs):
+        company = kwargs.pop('company', None)
+        super().__init__(*args, **kwargs)
+        
+        if company:
+            self.fields['field'].queryset = Field.objects.filter(company=company)
+            self.fields['warehouse'].queryset = Warehouse.objects.filter(company=company)
+
     def save(self, operator):
         with transaction.atomic():
             batch = GrainBatch.objects.create(
@@ -119,7 +127,7 @@ class GrainIncomingForm(forms.Form):
                 batch=batch,
                 entry_type=WarehouseJournalEntry.EntryTypeChoice.INCOMING,
                 weight_tons=self.cleaned_data['weight_tons'],
-                operator=operator
+                operator_id=operator.id
             )
             
             warehouse = self.cleaned_data['warehouse']
@@ -169,6 +177,14 @@ class GrainOutgoingForm(forms.Form):
             'min': '0.01'
         })
     )
+
+    def __init__(self, *args, **kwargs):
+        company = kwargs.pop('company', None)
+        super().__init__(*args, **kwargs)
+        
+        if company:
+            self.fields['warehouse'].queryset = Warehouse.objects.filter(company=company)
+            self.fields['batch'].queryset = GrainBatch.objects.filter(field__company=company)
 
     def clean(self):
         cleaned_data = super().clean()

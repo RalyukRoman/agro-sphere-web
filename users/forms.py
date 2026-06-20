@@ -3,6 +3,7 @@ from django.db import transaction
 from django.contrib.auth import get_user_model
 from django.contrib.auth.forms import UserCreationForm
 from django.core.exceptions import ValidationError
+from django.contrib.auth.models import Group
 
 from .models import Company
 import uuid
@@ -79,7 +80,7 @@ class CompanyForm(forms.ModelForm):
             password = self.cleaned_data.get('admin_password')
             phone = self.cleaned_data.get('admin_phone')
 
-            User.objects.create_user(
+            admin_user = User.objects.create_user(
                 username=username,
                 email=email,
                 password=password,
@@ -87,6 +88,9 @@ class CompanyForm(forms.ModelForm):
                 company=company,
                 role='admin'
             )
+            
+            group, created = Group.objects.get_or_create(name='Admins')
+            admin_user.groups.add(group)
             
         return company
 
@@ -150,12 +154,16 @@ class UserRegistrationForm(UserCreationForm):
         return company
 
     def save(self, commit=True):
-        user = super().save(commit=False)
-        user.company = self.cleaned_data.get('company_id')
-        user.role = User.Roles.USER
-        
-        if commit:
-            user.save()
+        with transaction.atomic():
+            user = super().save(commit=False)
+            user.company = self.cleaned_data.get('company_id')
+            user.role = User.Roles.USER
+            
+            if commit:
+                user.save()
+                group, created = Group.objects.get_or_create(name='Users')
+                user.groups.add(group)
+                
         return user
 
 
